@@ -2,10 +2,11 @@ import os
 import yfinance as yf
 from datetime import datetime
 from functools import reduce
-from stock_list import STOCK_IDS
-from utils import suppress_stdout
+from .stock_list import STOCK_IDS
+from .utils import suppress_stdout
+from .constants import *
 
-SYMBOLS = ['MACD', 'VOLUMNE']
+SYMBOLS = [MACD, VOLUME]
 
 
 def daily_recommendations(symbols):
@@ -13,7 +14,6 @@ def daily_recommendations(symbols):
     for symbol in symbols:
         func = SYMBOL_FUNCTION[symbol]
         matches = set()
-        # IS_GOLDEN_CROSS = set()
         with suppress_stdout():
             for stock_id in STOCK_IDS:
                 stock_symbol = f'{stock_id}.TW'
@@ -43,8 +43,8 @@ def is_large_volume(data):
 
 
 SYMBOL_FUNCTION = {
-    'MACD': is_macd_golden_cross,
-    'VOLUMNE': is_large_volume,
+    MACD: is_macd_golden_cross,
+    VOLUME: is_large_volume,
 }
 
 

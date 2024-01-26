@@ -1,0 +1,2 @@
+MACD = 'MACD'
+VOLUME = 'VOLUME'
