@@ -1,9 +1,6 @@
-import twstock
 import pandas as pd
 import requests
 
-
-STOCK_IDS2 = (code for code in twstock.twse.keys())
 
 def get_stock_ids():
     res = requests.get("http://isin.twse.com.tw/isin/C_public.jsp?strMode=2")

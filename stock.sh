@@ -4,4 +4,4 @@ date
 #echo "印出檔案列表"
 #ls -l
 
-python3 /Users/chia-weihsu/Desktop/stock/recommendator.py
+python3 /Users/chia-weihsu/Desktop/TWStockRecommend/recommendator.py

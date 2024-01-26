@@ -1,3 +1,4 @@
+import os
 import yfinance as yf
 from datetime import datetime
 from functools import reduce
@@ -50,7 +51,7 @@ SYMBOL_FUNCTION = {
 report = daily_recommendations(SYMBOLS)
 today_date = datetime.now().date().strftime('%Y%m%d')
 intersection = reduce(lambda a, b: a.intersection(b), report.values())
-with open(f'/Users/chia-weihsu/Desktop/台股推薦.txt', 'a') as file:
+with open(f"/Users/{os.environ.get('USER')}/Desktop/台股推薦.txt", "a") as file:
     for symbol, matches in report.items():
         file.write(f'{today_date} {symbol}: {matches}\n')
         file.write('-' * 20 + '\n')
