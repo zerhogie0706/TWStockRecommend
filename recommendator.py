@@ -43,7 +43,7 @@ def daily_recommendations(symbols, country='TW'):
                 func = SYMBOL_FUNCTION[symbol]
                 if func(data):
                     all_matches_count += 1
-                    matches[symbol][stock_id] = list(data['Close'])[::-1][0]
+                    matches[symbol][stock_id] = round(list(data['Close'])[::-1][0], 2)
 
             if all_matches_count == len(SYMBOLS):
                 all_matches_set.add(stock_id)
