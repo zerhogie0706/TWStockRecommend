@@ -1,5 +1,6 @@
 import csv
 import os
+from ta.momentum import RSIIndicator
 import yfinance as yf
 from datetime import datetime
 from functools import reduce
@@ -35,8 +36,10 @@ def daily_recommendations(symbols, country='TW'):
             data = yf.download(stock_symbol, period='3mo')
             if data.empty:
                 continue
-            # 美股加成交量條件至少1M
+            # 美股成交量條件至少1M 台股成交量條件至少 500張
             if country == US and list(data['Volume'])[::-1][0] < 1000000:
+                continue
+            elif country == TW and list(data['Volume'])[::-1][0] < 500000:
                 continue
             all_matches_count = 0
             for symbol in symbols:
@@ -72,6 +75,33 @@ def is_large_volume(data):
     except:
         return False
 
+
+def rsi_divergence(data, window=10):
+    data['RSI'] = RSIIndicator(close=data['Close'], window=window).rsi()
+    def find_peaks(series):
+        return (series.shift(1) < series) & (series.shift(-1) < series)
+
+    # Find peaks in price and RSI
+    price_peaks = find_peaks(data['Close'])
+    rsi_peaks = find_peaks(data['RSI'])
+
+    # Find troughs in price and RSI
+    price_troughs = find_peaks(-data['Close'])
+    rsi_troughs = find_peaks(-data['RSI'])
+
+    rsi_peaks_shifted_neg_1 = rsi_peaks.shift(-1).fillna(False).astype(bool)
+    rsi_peaks_shifted_1 = rsi_peaks.shift(1).fillna(False).astype(bool)
+
+    rsi_troughs_shifted_neg_1 = rsi_troughs.shift(-1).fillna(False).astype(bool)
+    rsi_troughs_shifted_1 = rsi_troughs.shift(1).fillna(False).astype(bool)
+
+    # Detect bullish divergence (price makes new lows, RSI does not)
+    bull_div = data[(price_troughs) & (~rsi_troughs_shifted_neg_1) & (~rsi_troughs_shifted_1)]
+
+    # Detect bearish divergence (price makes new highs, RSI does not)
+    bear_div = data[(price_peaks) & (~rsi_peaks_shifted_neg_1) & (~rsi_peaks_shifted_1)]
+    return bull_div, bear_div
+        
 
 SYMBOL_FUNCTION = {
     MACD: is_macd_golden_cross,

@@ -16,7 +16,7 @@ def validate(stock_ticker_list, country='TW'):
             close = [0, 0]
         result.append(close)
 
-    with open('validateTW-0128.csv', 'w') as file:
+    with open('validateTW.csv', 'w') as file:
         writer = csv.writer(file)
         for close in result:
             writer.writerow(close)
